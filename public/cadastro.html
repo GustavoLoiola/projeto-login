@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se</title>
+    <link rel="stylesheet" href="estilos/cadastro.css">
+    <link rel="shortcut icon" href="./imagens/banco-de-dados.png" type="image/x-icon"> 
+    <script src="scripts/index.js" defer></script>
+</head>
+<body>
+    <main>
+        <section id="cadastro">
+            <form id="formCadastro" method="post">
+
+                <div>
+                    <input type="text" id="nome" name="nome" required placeholder="Nome completo">
+                </div>
+
+                <div>
+                    <label for="idade">Nascimento:</label>
+                    <input type="date" id="nascimento" name="nascimento" min="1900-01-01"
+                    max="2025-12-31" required>
+                </div>
+
+                <div>
+                    <select>
+                      <option value="+55">🇧🇷 +55</option>
+                    </select>
+                    <input type="tel" id="telefone" name="telefone" placeholder="Telefone (Opcional)">
+                </div>
+
+                <div>
+                    <input type="email" id="email" name="email" required placeholder="E-mail">
+                </div>
+
+                <div>
+                    <input type="email" id="confirmarEmail" name="confirmarEmail" required placeholder="Confirmar E-mail">
+                </div>
+
+                <div>
+                    <input type="password" id="senha" name="senha" required minlength="6" placeholder="Crie uma senha">
+                </div>
+
+                 <div>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" required minlength="6" placeholder="Confirme sua senha">
+                </div>
+
+
+                <div id="submit">
+                    <button type="submit" id="submit-btn">Cadastrar</button>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+</body>
+</html>
