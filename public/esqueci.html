@@ -4,8 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Esqueci a senha</title>
+    <link rel="stylesheet" href="../public/estilos/esqueci.css">
 </head>
 <body>
+    <main>
+        <div id="container">
     
+            <section>
+                <h1>Esqueceu sua senha?</h1>
+                <p>Sem problemas! Vamos te ajudar a recuperar sua conta.</p>
+            </section>
+    
+            <section id="etapa-email">
+                <h2>Recuperar via e-mail</h2>
+    
+                <form id="form-email">
+                    <div>
+                        <label for="email">Digite seu E-mail:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+    
+                    <button type="submit">Enviar código</button>
+                </form>
+            </section>
+    
+            <!-- ETAPA 2 - Código + nova senha -->
+            <section id="etapa-codigo">
+                <h2>Digite o código recebido</h2>
+    
+                <form id="form-codigo">
+                    <div>
+                        <label for="codigo">Código:</label>
+                        <input type="text" id="codigo" name="codigo" required>
+                    </div>
+    
+                    <div>
+                        <label for="novaSenha">Nova senha:</label>
+                        <input type="password" id="novaSenha" name="novaSenha" required>
+                    </div>
+    
+                    <div>
+                        <label for="confirmarSenha">Confirmar nova senha:</label>
+                        <input type="password" id="confirmarSenha" name="confirmarSenha" required>
+                    </div>
+    
+                    <button type="submit">Redefinir senha</button>
+                </form>
+            </section>
+        </div>
+
+    </main>
+
 </body>
 </html>

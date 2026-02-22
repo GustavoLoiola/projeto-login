@@ -14,7 +14,7 @@ body {
 }
 
 body, html {
-    background-color:#5f2c82;
+    background-image: linear-gradient(to top, #49a09d, #5f2c82);
     min-height: 100vh;
     min-width: 100vw;
 }
@@ -80,3 +80,21 @@ div#submit > button {
 div#submit > button:hover {
     background-color: #310247;
 }
+
+input#telefone {
+    width: 140px;
+}
+
+div > select {
+    width: 60px;
+    height: 25px;
+    border-radius: 3px;
+    background-color: #49a09d;
+    color: white;
+}
+
+div > select:focus {
+    background-color: white;
+    color: #5f2c82;
+}
+

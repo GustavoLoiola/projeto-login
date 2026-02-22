@@ -13,8 +13,7 @@ router.post("/cadastro", async (req, res) => {
         const senhaHash = await bcrypt.hash(senha, 10);
 
         console.log("Senha hash:", senhaHash);
-
-        // Aqui depois você conecta com o banco
+        
 
         res.status(201).json({ mensagem: "Usuário criado com sucesso." });
 
