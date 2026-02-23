@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Esqueci a senha</title>
-    <link rel="stylesheet" href="../public/estilos/esqueci.css">
+    <link rel="stylesheet" href="/estilos/esqueci.css">
 </head>
 <body>
     <main>
@@ -19,32 +19,32 @@
                 <h2>Recuperar via e-mail</h2>
     
                 <form id="form-email">
+                    <label for="email">Digite seu E-mail:</label>
                     <div>
-                        <label for="email">Digite seu E-mail:</label>
                         <input type="email" id="email" name="email" required>
                     </div>
     
-                    <button type="submit">Enviar código</button>
+                    <button type="submit" id="email-codigo">Enviar código</button>
                 </form>
             </section>
     
-            <!-- ETAPA 2 - Código + nova senha -->
-            <section id="etapa-codigo">
+
+            <section id="etapa-codigo" class="hidden">
                 <h2>Digite o código recebido</h2>
     
                 <form id="form-codigo">
+                    <label for="codigo">Código:</label>
                     <div>
-                        <label for="codigo">Código:</label>
                         <input type="text" id="codigo" name="codigo" required>
                     </div>
     
+                    <label for="novaSenha">Nova senha:</label>
                     <div>
-                        <label for="novaSenha">Nova senha:</label>
                         <input type="password" id="novaSenha" name="novaSenha" required>
                     </div>
-    
+
+                    <label for="confirmarSenha">Confirmar nova senha:</label>
                     <div>
-                        <label for="confirmarSenha">Confirmar nova senha:</label>
                         <input type="password" id="confirmarSenha" name="confirmarSenha" required>
                     </div>
     
@@ -55,5 +55,6 @@
 
     </main>
 
+    <script src="/scripts/esqueci.js"></script>
 </body>
 </html>
