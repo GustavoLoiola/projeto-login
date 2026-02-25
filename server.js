@@ -143,6 +143,51 @@ app.post("/validar-codigo", async (req, res) => {
     }
 })
 
+
+app.post("/login", async (req, res) => {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+        return res.status(400).json({ erro: "Preencha todos os campos!" });
+    }
+
+    try {
+        const [rows] = await db.query(
+            "SELECT * FROM usuarios WHERE email = ?",
+            [email]
+        );
+
+        if (rows.length === 0) {
+            return res.status(401).json({ erro: "Usuário não encontrado" });
+        }
+
+        const usuario = rows[0];
+
+        const senhaCorreta = await bcrypt.compare(
+            senha,
+            usuario.senha
+        );
+
+        if (!senhaCorreta) {
+            return res.status(401).json({ erro: "Senha incorreta" });
+        }
+
+        return res.json({ mensagem: "Login realizado com sucesso" });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ erro: "Erro interno do servidor" });
+    }
+
+   
+});
+
+
+
+
+
+
+
 //Teste de servidor
 app.listen(3000, () => {
     console.log("Servidor rodando na porta 3000")

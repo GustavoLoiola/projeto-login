@@ -18,7 +18,7 @@
             <div id="formulario">
                 <h1>Login</h1>
                 <p>Seja bem vindo(a) novamente! Faça Login para acessar sua conta e poder fazer as configurações do seu ambiente.</p>
-                <form action="" method="post" autocomplete="on">
+                <form autocomplete="on" id="formLogin">
                     <div class="campo">
                         <span class="material-symbols-outlined">
                             account_circle
@@ -33,7 +33,7 @@
                         <input type="password" name="senha" id="isenha" placeholder="Sua senha" autocomplete="current-password" required maxlength="30" minlength="6">
                         <label for="isenha">Senha</label>
                     </div>
-                    <input type="submit" value="Entrar">
+                    <input type="submit" value="Entrar" id="entrar">
                     <a href="esqueci.html" class="botao">Esqueci a senha
                         <span class="material-symbols-outlined"> mail </span>
                     </a>
@@ -42,5 +42,7 @@
             </div>
         </section>
     </main>
+
+    <script src="scripts/login.js"></script>
 </body>
 </html>
