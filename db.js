@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+const { Pool } = require("pg");
 require("dotenv").config();
 
 const conexao = mysql.createPool({
