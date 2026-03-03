@@ -1,18 +1,10 @@
 const { Pool } = require("pg");
-require("dotenv").config();
 
-const conexao = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT),
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
-  },
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  }
 });
 
-module.exports = conexao.promise();
+module.exports = pool;

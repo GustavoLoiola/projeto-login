@@ -1,183 +1,173 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const db = require("./db");
-const crypto = require("crypto");
+const express = require("express")
+const bcrypt = require("bcrypt")
+const db = require("./db")
+const crypto = require("crypto")
 
-const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/;
+const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/
 
-const app = express();
-app.use(express.json());
-app.use(express.static("public"));
+const app = express()
+app.use(express.json())
+app.use(express.static("public"))
 
-/* =========================
-   CADASTRO
-========================= */
+
 app.post("/cadastro", async (req, res) => {
   try {
-    const { nome, nascimento, telefone, email, senha } = req.body;
+    const { nome, nascimento, telefone, email, senha } = req.body
 
-    const [usuarioExistente] = await db.query(
-      "SELECT id FROM usuarios WHERE email = ?",
+    const result = await db.query(
+      "SELECT id FROM usuarios WHERE email = $1",
       [email]
-    );
+    )
 
-    if (usuarioExistente.length > 0) {
-      return res.status(400).json({ mensagem: "Email já cadastrado." });
+    if (result.rows.length > 0) {
+      return res.status(400).json({ mensagem: "Email já cadastrado." })
     }
 
     if (!regexSenha.test(senha)) {
       return res.status(400).json({
         mensagem:
           "Senha inválida! Deve conter no mínimo 6 caracteres, 1 letra maiúscula, 1 letra minúscula e 1 caractere especial."
-      });
+      })
     }
 
-    const senhaHash = await bcrypt.hash(senha, 10);
+    const senhaHash = await bcrypt.hash(senha, 10)
 
     await db.query(
-      "INSERT INTO usuarios (nome, nascimento, telefone, email, senha) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO usuarios (nome, nascimento, telefone, email, senha) VALUES ($1, $2, $3, $4, $5)",
       [nome, nascimento, telefone, email, senhaHash]
-    );
+    )
 
-    res.status(201).json({ mensagem: "Usuário cadastrado com sucesso!" });
+    res.status(201).json({ mensagem: "Usuário cadastrado com sucesso!" })
   } catch (erro) {
-    console.error(erro);
-    res.status(500).json({ mensagem: "Erro interno do servidor." });
+    console.error(erro)
+    res.status(500).json({ mensagem: "Erro interno do servidor." })
   }
-});
+})
 
-/* =========================
-   GERAR CÓDIGO
-========================= */
+
 function gerarCodigo() {
-  return crypto.randomInt(100000, 1000000).toString();
+  return crypto.randomInt(100000, 1000000).toString()
 }
 
-/* =========================
-   VERIFICAR EMAIL
-========================= */
+
 app.post("/verificar-email", async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email } = req.body
 
-    const [usuario] = await db.query(
-      "SELECT id FROM usuarios WHERE email = ?",
+    const result = await db.query(
+      "SELECT * FROM usuarios WHERE email = $1",
       [email]
-    );
+    )
 
-    if (usuario.length === 0) {
-      return res.json({ existe: false });
+    if (result.rows.length === 0) {
+      return res.json({ existe: false })
     }
 
-    const codigo = gerarCodigo();
-    const expiraEm = new Date(Date.now() + 10 * 60 * 1000);
+    const codigo = gerarCodigo()
+    const expiraEm = new Date(Date.now() + 10 * 60 * 1000)
 
     await db.query(
-      "UPDATE usuarios SET codigo_recuperacao = ?, codigo_expira_em = ? WHERE email = ?",
+      "UPDATE usuarios SET codigo_recuperacao = $1, codigo_expira_em = $2 WHERE email = $3",
       [codigo, expiraEm, email]
-    );
+    )
 
-    console.log("Código gerado:", codigo);
+    console.log("Código gerado:", codigo)
 
-    res.json({ existe: true });
+    res.json({ existe: true })
   } catch (erro) {
-    console.error(erro);
-    res.status(500).json({ mensagem: "Erro interno." });
+    console.error(erro)
+    res.status(500).json({ mensagem: "Erro interno." })
   }
-});
+})
 
-/* =========================
-   VALIDAR CÓDIGO
-========================= */
+
 app.post("/validar-codigo", async (req, res) => {
   try {
-    const { email, codigo, novaSenha } = req.body;
+    const { email, codigo, novaSenha } = req.body
 
     if (!email || !codigo || !novaSenha) {
-      return res.status(400).json({ mensagem: "Dados incompletos." });
+      return res.status(400).json({ mensagem: "Dados incompletos." })
     }
 
-    const [usuario] = await db.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+    const result = await db.query(
+      "SELECT * FROM usuarios WHERE email = $1",
       [email]
-    );
+    )
 
-    if (usuario.length === 0) {
-      return res.status(400).json({ mensagem: "Usuário não encontrado." });
+    if (result.rows.length === 0) {
+      return res.status(400).json({ mensagem: "Usuário não encontrado." })
     }
 
-    const user = usuario[0];
+    const user = result.rows[0]
 
     if (user.codigo_recuperacao !== codigo) {
-      return res.status(400).json({ mensagem: "Código inválido." });
+      return res.status(400).json({ mensagem: "Código inválido." })
     }
 
     if (new Date() > new Date(user.codigo_expira_em)) {
-      return res.status(400).json({ mensagem: "Código expirado." });
+      return res.status(400).json({ mensagem: "Código expirado." })
     }
 
     if (!regexSenha.test(novaSenha)) {
       return res.status(400).json({
         mensagem:
           "Senha inválida! Deve conter no mínimo 6 caracteres, 1 letra maiúscula, 1 letra minúscula e 1 caractere especial."
-      });
+      })
     }
 
-    const senhaHash = await bcrypt.hash(novaSenha, 10);
+    const senhaHash = await bcrypt.hash(novaSenha, 10)
 
     await db.query(
       `UPDATE usuarios 
-       SET senha = ?, 
-           codigo_recuperacao = NULL, 
+       SET senha = $1,
+           codigo_recuperacao = NULL,
            codigo_expira_em = NULL
-       WHERE email = ?`,
+       WHERE email = $2`,
       [senhaHash, email]
-    );
+    )
 
-    res.redirect("/index.html");
+    res.redirect("/index.html")
   } catch (erro) {
-    console.error(erro);
-    res.status(500).json({ mensagem: "Erro interno." });
+    console.error(erro)
+    res.status(500).json({ mensagem: "Erro interno." })
   }
-});
+})
 
-/* =========================
-   LOGIN
-========================= */
+
 app.post("/login", async (req, res) => {
   try {
-    const { email, senha } = req.body;
+    const { email, senha } = req.body
 
     if (!email || !senha) {
-      return res.status(400).json({ erro: "Preencha todos os campos!" });
+      return res.status(400).json({ erro: "Preencha todos os campos!" })
     }
 
-    const [rows] = await db.query(
-      "SELECT * FROM usuarios WHERE email = ?",
+    const result = await db.query(
+      "SELECT * FROM usuarios WHERE email = $1",
       [email]
-    );
+    )
 
-    if (rows.length === 0) {
-      return res.status(401).json({ erro: "Usuário não encontrado" });
+    if (result.rows.length === 0) {
+      return res.status(401).json({ erro: "Usuário não encontrado" })
     }
 
-    const usuario = rows[0];
+    const usuario = result.rows[0]
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha)
 
     if (!senhaCorreta) {
-      return res.status(401).json({ erro: "Senha incorreta" });
+      return res.status(401).json({ erro: "Senha incorreta" })
     }
 
-    res.json({ mensagem: "Login realizado com sucesso" });
+    res.json({ mensagem: "Login realizado com sucesso" })
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ erro: "Erro interno do servidor" });
+    console.error(err)
+    res.status(500).json({ erro: "Erro interno do servidor" })
   }
-});
+})
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
-  console.log("Servidor rodando na porta", PORT);
-});
+  console.log("Servidor rodando na porta", PORT)
+})
