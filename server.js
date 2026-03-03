@@ -8,6 +8,7 @@ const regexSenha = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/
 const app = express()
 app.use(express.json())
 app.use(express.static("public"))
+app.use(express.urlencoded({ extended: true }))
 
 
 app.post("/cadastro", async (req, res) => {
